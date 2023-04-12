@@ -4,7 +4,6 @@
 #define RIGHT_PIN 10
 #define VERT_PIN 11
 
-// Analog input pins
 #define JOY1_HOR A1
 #define JOY1_VER A0
 
@@ -22,12 +21,13 @@ int left_pulse = MIN_PULSE;
 int right_pulse = MIN_PULSE;
 int vert_pulse = MIN_PULSE;
 
-// Primitive controller
 int left_goal = MIN_PULSE;
 int right_goal = MIN_PULSE;
 int vert_goal = MIN_PULSE;
 
 void setup() {
+  Serial.begin(9600);
+
   pinMode(JOY1_HOR, INPUT);
   pinMode(JOY1_VER, INPUT);
   pinMode(JOY2_HOR, INPUT);
@@ -36,7 +36,7 @@ void setup() {
   s_left.attach(LEFT_PIN, MIN_PULSE, MAX_PULSE);
   s_right.attach(RIGHT_PIN, MIN_PULSE, MAX_PULSE);
   s_vert.attach(VERT_PIN, MIN_PULSE, MAX_PULSE);
-  delay(5000);
+  delay(3000);
 }
 
 void loop() {
@@ -63,7 +63,7 @@ void loop() {
 
   // right
   if (x1 < 512) {
-    left_goal = map(x1, 0, 511, MIN_PULSE, MAX_PULSE);
+    left_goal = map(511 - x1, 0, 511, MIN_PULSE, MAX_PULSE);
   }
   // left
   else {
@@ -82,19 +82,19 @@ void loop() {
   }
 
   // Update motors themselves
-  if (left_goal > left_pulse < 0) {
+  if (left_goal > left_pulse) {
     s_left.writeMicroseconds(++left_pulse);
   } else if (left_goal < left_pulse) {
     s_left.writeMicroseconds(--left_pulse);
   }
 
-  if (right_goal > right_pulse < 0) {
+  if (right_goal > right_pulse) {
     s_right.writeMicroseconds(++right_pulse);
   } else if (right_goal < right_pulse) {
     s_right.writeMicroseconds(--right_pulse);
   }
 
-  if (vert_goal > vert_pulse < 0) {
+  if (vert_goal > vert_pulse) {
     s_vert.writeMicroseconds(++vert_pulse);
   } else if (vert_goal < vert_pulse) {
     s_vert.writeMicroseconds(--vert_pulse);
